@@ -1,7 +1,17 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+	"compilerOptions": {
+		"paths": {
+			"@data/*": ["./src/data/*"],
+			"@layouts/*": ["./src/layouts/*"],
+			"@firebase/*": ["./src/firebase/*"],
+			"@header/*": ["./src/components/header/*"],
+			"@landing/*": ["./src/components/landing/*"],
+			"@map/*": ["./src/components/map/*"],
+			"@forecast/*": ["./src/components/forecast/*"],
+			"@styles/*": ["./src/styles/*"],
+			"@stores/*": ["./src/stores/*"],
+			"@utils/*": ["./src/utils/*"],
+			"@pages/*": ["./src/pages/*"]
+		}
+	}
 }

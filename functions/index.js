@@ -6,6 +6,31 @@ import cors from 'cors';
 const app = express();
 app.use(cors({ origin: true }));
 
+// TIME
+// app.get('/time', (req, res) => {
+//   const currentTime = formatTime(new Date());
+//   res.send(currentTime);
+// });
+
+app.get('/time-sse', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const sendTimeUpdate = () => {
+    const currentTime = new Date().toString();
+    res.write(`data: ${ currentTime }\n\n`);
+  };
+
+  const interval = setInterval(sendTimeUpdate, 1000);
+
+  req.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
+});
+
+// WEATHER
 app.get('/weather', async (req, res) => {
   const lat = req.query.lat;
   const lon = req.query.lon;
@@ -24,6 +49,7 @@ app.get('/weather', async (req, res) => {
   }
 });
 
+// MAPBOX
 app.get('/mapbox', async (req, res) => {
   const query = req.query.query;
   const MAPBOX_API_KEY = functions.config().mapbox.key;

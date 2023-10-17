@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import axios from 'axios';
-import { staticWeather } from '@data/staticWeather';
+import { staticWeather, weatherTypes } from '@data/staticWeather';
 import { states } from '@data/states';
-import { formatLocation, formatTime } from '@utils/utils';
+import { formatLocation, randomNumRange, getPhotoTitle } from '@utils/utils';
+import { storage } from '@firebase/config';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 
 const useStores = create((set) => ({
@@ -10,11 +12,14 @@ const useStores = create((set) => ({
   // Weather-related state
   weather: staticWeather,
   weatherIcon: `https://openweathermap.org/img/wn/${ staticWeather.hourly[0].weather[0].icon }@2x.png`,
+  weatherPhoto: '',
   weatherLoading: false,
   weatherError: null,
+  setWeatherPhoto: (newPhoto) => set({ weatherPhoto: newPhoto }),
   setWeather: (data) => {
     set({ weather: data });
     get().updateWeatherIcon();
+    get().updateWeatherPhoto();
   },
   setWeatherLoading: (isLoading) => set({ weatherLoading: isLoading }),
   setWeatherError: (err) => set({ weatherError: err }),
@@ -76,6 +81,27 @@ const useStores = create((set) => ({
     if (weather && weather.hourly && weather.hourly[0] && weather.hourly[0].weather && weather.hourly[0].weather[0]) {
       const newIcon = `https://openweathermap.org/img/wn/${ weather.hourly[0].weather[0].icon }@2x.png`;
       set({ weatherIcon: newIcon });
+    }
+  },
+
+  updateWeatherPhoto: () => {
+    const weather = get().weather;
+    if (weather && weather.daily[0]) {
+      (async () => {
+        const title = getPhotoTitle(
+          weatherTypes,
+          weather.daily[0].weather[0].main
+        );
+        try {
+          const folderRef = ref(storage, title);
+          const { items } = await listAll(folderRef);
+          const photoNum = randomNumRange(0, items.length - 1);
+          const url = await getDownloadURL(items.at(photoNum));
+          set({ weatherPhoto: url });
+        } catch (err) {
+          console.error('Error retrieving weather photo', err.message);
+        }
+      })();
     }
   },
 

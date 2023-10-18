@@ -1,6 +1,14 @@
 export const randomNumRange = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-export const formatTime = (currentTime) => currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+export const convertTime = (currentTime) => currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+export const formatTime = (unix) => {
+  const date = new Date(unix * 1000);
+  const hours = date.getHours();
+  const minutes = '0' + date.getMinutes();
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  return (hours % 12 || 12) + ':' + minutes.slice(-2) + ' ' + ampm;
+};
 
 export const formatWindDeg = (deg) => {
   const val = Math.floor((deg / 22.5) + 0.5);

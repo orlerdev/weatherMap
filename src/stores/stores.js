@@ -7,7 +7,7 @@ import { storage } from '@firebase/config';
 import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 
-const useStores = create((set) => ({
+const useStores = create((set, get) => ({
 
   // Weather-related state
   weather: staticWeather,
@@ -27,35 +27,18 @@ const useStores = create((set) => ({
   // Map-related state
   lon: -98.48527,
   lat: 29.423017,
-  mapLocation: null,
+  setLon: (newLon) => set({ lon: newLon }),
+  setLat: (newLat) => set({ lat: newLat }),
+  zoom: 9,
+  setZoom: (newZoom) => set({ zoom: newZoom }),
+  mapLocation: formatLocation(states, 'San Antonio, Texas'),
   search: null,
   searchResult: null,
   mapLoading: false,
   mapError: null,
 
-  // Weather-related actions
-  fetchWeatherData: async () => {
-    const { lat, lon } = useStores.getState();
-    if (lat && lon) {
-      try {
-        set({ weatherLoading: true });
-        const res = await axios.get(
-          `https://us-central1-weathermap-90bca.cloudfunctions.net/api/weather`,
-          {
-            params: { lat, lon },
-          }
-        );
-        setWeather(res.data);
-        set({ weatherLoading: false });
-      } catch (err) {
-        console.error('Error fetching weather data.', err);
-        setWeatherError(err);
-        set({ weatherLoading: false });
-      }
-    }
-  },
-
-  // Map-related actions
+  // MAP ACTIONS
+  // GET USER LOCATION
   getUserLocation: () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -74,38 +57,9 @@ const useStores = create((set) => ({
     }
   },
 
-  setSearch: (newSearch) => set({ search: newSearch }),
-
-  updateWeatherIcon: () => {
-    const weather = get().weather;
-    if (weather && weather.hourly && weather.hourly[0] && weather.hourly[0].weather && weather.hourly[0].weather[0]) {
-      const newIcon = `https://openweathermap.org/img/wn/${ weather.hourly[0].weather[0].icon }@2x.png`;
-      set({ weatherIcon: newIcon });
-    }
-  },
-
-  updateWeatherPhoto: () => {
-    const weather = get().weather;
-    if (weather && weather.daily[0]) {
-      (async () => {
-        const title = getPhotoTitle(
-          weatherTypes,
-          weather.daily[0].weather[0].main
-        );
-        try {
-          const folderRef = ref(storage, title);
-          const { items } = await listAll(folderRef);
-          const photoNum = randomNumRange(0, items.length - 1);
-          const url = await getDownloadURL(items.at(photoNum));
-          set({ weatherPhoto: url });
-        } catch (err) {
-          console.error('Error retrieving weather photo', err.message);
-        }
-      })();
-    }
-  },
-
+  // FETCH LOCATION
   fetchLocationData: async () => {
+    console.log('Fetch location data started');
     const { lat, lon, search } = useStores.getState();
 
     if (search) {
@@ -132,6 +86,7 @@ const useStores = create((set) => ({
         set({ mapError: err, mapLoading: false });
       }
     } else if (lat && lon) {
+      console.log('lat and lon change caused location fetch');
       try {
         set({ mapLoading: true });
         const res = await axios.get(
@@ -154,7 +109,63 @@ const useStores = create((set) => ({
       }
     }
   },
+
+  // SEARCH
+  setSearch: (newSearch) => set({ search: newSearch }),
+
+  // WEATHER ACTIONS
+  // FETCH WEATHER DATA
+  fetchWeatherData: async () => {
+    const { lat, lon } = useStores.getState();
+    if (lat && lon) {
+      try {
+        set({ weatherLoading: true });
+        const res = await axios.get(
+          `https://us-central1-weathermap-90bca.cloudfunctions.net/api/weather`,
+          {
+            params: { lat, lon },
+          }
+        );
+        setWeather(res.data);
+        set({ weatherLoading: false });
+      } catch (err) {
+        console.error('Error fetching weather data.', err);
+        setWeatherError(err);
+        set({ weatherLoading: false });
+      }
+    }
+  },
+
+  // WEATHER ICON
+  updateWeatherIcon: () => {
+    const weather = get().weather;
+    if (weather && weather.hourly && weather.hourly[0] && weather.hourly[0].weather && weather.hourly[0].weather[0]) {
+      const newIcon = `https://openweathermap.org/img/wn/${ weather.hourly[0].weather[0].icon }@2x.png`;
+      set({ weatherIcon: newIcon });
+    }
+  },
+
+  // WEATHER PHOTO
+  updateWeatherPhoto: () => {
+    const weather = get().weather;
+    if (weather && weather.daily[0]) {
+      (async () => {
+        const title = getPhotoTitle(
+          weatherTypes,
+          weather.daily[0].weather[0].main
+        );
+        try {
+          const folderRef = ref(storage, title);
+          const { items } = await listAll(folderRef);
+          const photoNum = randomNumRange(0, items.length - 1);
+          const url = await getDownloadURL(items.at(photoNum));
+          set({ weatherPhoto: url });
+        } catch (err) {
+          console.error('Error retrieving weather photo', err.message);
+        }
+      })();
+    }
+  },
 }));
 
-// Export the combined store
 export default useStores;

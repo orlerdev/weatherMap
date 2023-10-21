@@ -1,7 +1,7 @@
 'use client'
 import { formatLocation } from '@utils/utils'
 import { states } from '@data/states'
-import useStores from '@stores/stores'
+import useStores from '../../stores/oldStores'
 
 const Location = () => {
 	const { mapLocation } = useStores()

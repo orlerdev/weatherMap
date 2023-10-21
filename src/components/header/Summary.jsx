@@ -1,5 +1,5 @@
 'use client'
-import useStores from '@stores/stores'
+import useStores from '../../stores/oldStores'
 
 const Summary = () => {
 	const { weather } = useStores()

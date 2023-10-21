@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import useStores from '@stores/stores'
+import useStores from '../../stores/oldStores'
 import { formatTemp } from '@utils/utils'
 
 const DayNight = () => {

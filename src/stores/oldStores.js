@@ -1,13 +1,8 @@
 import { create } from 'zustand';
 import axios from 'axios';
-import { staticWeather, weatherTypes } from '@data/staticWeather';
-import { states } from '@data/states';
-import { formatLocation, randomNumRange, getPhotoTitle } from '@utils/utils';
-import { storage } from '@firebase/config';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 
-const useStores = create((set, get) => ({
+const useOldStores = create((set, get) => ({
 
   // Weather-related state
   weather: staticWeather,

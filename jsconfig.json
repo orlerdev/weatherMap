@@ -9,7 +9,7 @@
 			"@map/*": ["./src/components/map/*"],
 			"@forecast/*": ["./src/components/forecast/*"],
 			"@styles/*": ["./src/styles/*"],
-			"@stores/*": ["./src/stores/*"],
+			"@stores/*": ["src/stores/*"],
 			"@utils/*": ["./src/utils/*"],
 			"@pages/*": ["./src/pages/*"]
 		}

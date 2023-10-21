@@ -1,5 +1,5 @@
 'use client'
-import useStores from '@stores/stores'
+import useStore from '@stores/store'
 import { useEffect } from 'react'
 import { storage } from '@firebase/config'
 import { ref, listAll, getDownloadURL } from 'firebase/storage'
@@ -15,8 +15,6 @@ import { weatherTypes } from '@data/staticWeather'
 import Detail from '@landing/Detail'
 
 const Weather = () => {
-	const { weather, weatherPhoto, setWeatherPhoto } = useStores()
-
 	useEffect(() => {
 		;(async () => {
 			const title = getPhotoTitle(

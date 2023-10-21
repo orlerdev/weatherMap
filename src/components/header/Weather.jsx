@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { formatTemp } from '@utils/utils'
-import useStores from '@stores/stores'
+import useStores from '../../stores/oldStores'
 
 const Weather = () => {
 	const { weatherIcon, weather } = useStores()

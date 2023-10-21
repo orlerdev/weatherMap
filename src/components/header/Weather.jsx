@@ -1,10 +1,16 @@
 'use client'
+import { useEffect } from 'react'
+import useStores from '@stores/store'
 import Image from 'next/image'
 import { formatTemp } from '@utils/utils'
-import useStores from '../../stores/oldStores'
 
 const Weather = () => {
-	const { weatherIcon, weather } = useStores()
+	const { weather, weatherIcon } = useStores()
+
+	useEffect(() => {
+		useStores.subscribe((state) => state.weather)
+	}, [])
+
 	return (
 		<div className='flex flex-row justify-center items-center'>
 			<Image

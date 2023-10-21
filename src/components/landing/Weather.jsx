@@ -1,37 +1,26 @@
 'use client'
 import useStore from '@stores/store'
-import { useEffect } from 'react'
-import { storage } from '@firebase/config'
-import { ref, listAll, getDownloadURL } from 'firebase/storage'
 import {
-	randomNumRange,
-	getPhotoTitle,
 	detailFormats,
 	mapNameToProp,
 	formatDetail,
 	formatTemp
 } from '@utils/utils'
-import { weatherTypes } from '@data/staticWeather'
 import Detail from '@landing/Detail'
 
 const Weather = () => {
-	useEffect(() => {
-		;(async () => {
-			const title = getPhotoTitle(
-				weatherTypes,
-				weather.daily[0].weather[0].main
-			)
-			try {
-				const folderRef = ref(storage, title)
-				const { items } = await listAll(folderRef)
-				const photoNum = randomNumRange(0, items.length - 1)
-				const url = await getDownloadURL(items.at(photoNum))
-				setWeatherPhoto(url)
-			} catch (err) {
-				console.error('Error retrieving weather photo', err.message)
-			}
-		})()
-	}, [weather, setWeatherPhoto])
+	const { weather, weatherPhoto } = useStore((state) => ({
+		weather: state.weather,
+		weatherPhoto: state.weatherPhoto
+	}))
+
+	if (!weather || !weatherPhoto) {
+		return (
+			<div className='flex flex-col justify-center flex-1 w-full h-5/6 p-12'>
+				<h3 className='col-span-1'>Loading...</h3>
+			</div>
+		)
+	}
 
 	return (
 		<div
@@ -49,13 +38,17 @@ const Weather = () => {
 				<h3 className='col-span-1'>Low</h3>
 				<h3 className='col-span-1'>{formatTemp(weather.daily[0].temp.min)}</h3>
 			</div>
-			{Object.keys(detailFormats).map((name) => (
-				<Detail
-					key={name}
-					name={name}
-					value={formatDetail(name, weather.daily[0][mapNameToProp(name)])}
-				/>
-			))}
+			{weather && weather.daily && weather.daily[0] ? (
+				Object.keys(detailFormats).map((name) => (
+					<Detail
+						key={name}
+						name={name}
+						value={formatDetail(name, weather.daily[0][mapNameToProp(name)])}
+					/>
+				))
+			) : (
+				<h3 className='col-span-1'>Loading...</h3>
+			)}
 			<img
 				src={weatherPhoto}
 				alt='Weather Photo'

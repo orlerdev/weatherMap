@@ -67,6 +67,7 @@ export const formatMoonPhase = (moonPhase) => {
 };
 
 export const formatTemp = (temp) => `${ Math.round(temp) }º F`;
+;
 
 export const detailFormats = {
   'Sunrise': { func: formatTime },

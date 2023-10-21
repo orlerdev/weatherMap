@@ -1,10 +1,11 @@
 'use client'
-import { formatLocation } from '@utils/utils'
-import { states } from '@data/states'
-import useStores from '../../stores/oldStores'
+import useStore from '@stores/store'
 
 const Location = () => {
-	const { mapLocation } = useStores()
+	const { mapLocation } = useStore((state) => ({
+		mapLocation: state.mapLocation
+	}))
+
 	if (!mapLocation) {
 		return (
 			<div className='flex flex-row items-center justify-start h-full text-5xl pr-8 border-r'>

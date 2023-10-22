@@ -6,7 +6,8 @@ import {
 	formatDetail,
 	formatTemp
 } from '@utils/utils'
-import Detail from '@landing/Detail'
+import Forecast from '@forecast/Forecast'
+import Detail from './Detail'
 
 const Weather = () => {
 	const { weather, weatherPhoto } = useStore((state) => ({
@@ -24,8 +25,8 @@ const Weather = () => {
 
 	return (
 		<div
-			style={{ '--image-url': `url(${weatherPhoto})` }}
 			className={`relative flex flex-col justify-center flex-1 gap-y-4 w-full h-5/6 p-12`}>
+			<Forecast />
 			<div
 				className='grid grid-cols-2 grid-rows-1 gap-12 justify-between text-4xl z-[3]'
 				style={{ textShadow: '3px 3px 2px rgba(0,0,0,.9)' }}>

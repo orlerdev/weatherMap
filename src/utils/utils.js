@@ -25,6 +25,19 @@ export const formatDate = (date) => {
   return `${ month } ${ day }, ${ year }`;
 };
 
+export const formatForecastDate = (unix) => {
+  const date = new Date(unix * 1000);
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  return (
+    <>
+      <div>{ month }</div>
+      <div>{ day }</div>
+    </>
+  );
+};
+
 export const debounce = (func, wait) => {
   let timeout;
   return function executedFunction(...args) {

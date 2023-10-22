@@ -36,7 +36,8 @@ const useStore = create((set, get) => ({
   setWeatherIcon: (weatherIcon) => set({ weatherIcon }),
   weatherPhoto: '',
   setWeatherPhoto: (weatherPhoto) => set({ weatherPhoto }),
-
+  forecastDT: [],
+  setForecastDT: (forecastDT) => set({ forecastDT }),
   // DATA FETCHING
   fetchUserLocation: async () => {
     const search = get().search();
@@ -94,6 +95,7 @@ const useStore = create((set, get) => ({
         const weather = get().weather;
         get().setWeatherIcon(`https://openweathermap.org/img/wn/${ weather.hourly[0].weather[0].icon }@2x.png`);
         get().fetchWeatherPhoto(weather);
+        get().fetchForecastDT(weather);
         get().setLoading(false);
       } catch (err) {
         console.error('Error fetching weather data: ', err.message);
@@ -120,6 +122,13 @@ const useStore = create((set, get) => ({
       }
     }
   },
+  fetchForecastDT: () => {
+    const weather = get().weather;
+    if (weather && weather.daily) {
+      const firstFive = weather.daily.slice(0, 5);
+      get().setForecastDT(firstFive.map((day) => day.dt));
+    }
+  }
 }));
 useStore.getState().fetchWeatherData();
 export default useStore;

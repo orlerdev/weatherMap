@@ -26,14 +26,25 @@ export const formatDate = (date) => {
 };
 
 export const formatForecastDate = (unix) => {
-  const date = new Date(unix * 1000);
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const abbrDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-  const month = monthNames[date.getMonth()];
-  const day = date.getDate();
+  const currentDate = new Date();
+  const targetDate = new Date(unix * 1000);
+  let dayName = dayNames[targetDate.getDay()];
+  const differenceInDays = (targetDate - currentDate) / (1000 * 3600 * 24);
+  if (differenceInDays < 1 && targetDate.getDate() === currentDate.getDate()) {
+    dayName = 'Today';
+  } else if (differenceInDays < 2 && targetDate.getDate() === currentDate.getDate() + 1) {
+    dayName = 'Tomorrow';
+  }
+  const month = monthNames[currentDate.getMonth()];
+  const day = currentDate.getDate();
   return (
     <>
-      <div>{ month }</div>
-      <div>{ day }</div>
+      <div style={ { fontSize: '1.2rem' } }>{ dayName }</div>
+      <div style={ { fontSize: '2.5rem' } }>{ month }</div>
+      <div style={ { fontSize: '2.5rem' } }>{ day }</div>
     </>
   );
 };

@@ -38,6 +38,8 @@ const useStore = create((set, get) => ({
   setWeatherPhoto: (weatherPhoto) => set({ weatherPhoto }),
   forecastDT: [],
   setForecastDT: (forecastDT) => set({ forecastDT }),
+  activeCard: 0,
+  setActiveCard: (activeCard) => set({ activeCard }),
   // DATA FETCHING
   fetchUserLocation: async () => {
     const search = get().search();

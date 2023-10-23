@@ -1,7 +1,7 @@
 export const weatherTypes = {
   'clear': 'sunny',
-  'sunrise': 'sunriseSunset',
-  'sunset': 'sunriseSunset',
+  'sunrise': 'sunrise',
+  'sunset': 'sunset',
   'night': 'night',
   'clouds': 'clouds',
   'snow': 'snow',

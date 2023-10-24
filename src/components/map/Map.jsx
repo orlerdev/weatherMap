@@ -3,7 +3,7 @@ import {useEffect, useRef} from 'react'
 import useStore from '@stores/store'
 import axios from 'axios'
 import mapboxgl from 'mapbox-gl'
-import {debounce} from '@utils/utils'
+// DEBOUNCE FUNCTION NEEDED
 
 const Map = () => {
 	const {lon, setLon, lat, zoom, setZoom} = useStore((state) => ({
@@ -39,6 +39,7 @@ const Map = () => {
 			setZoom(parseFloat(map.current.getZoom().toFixed(2)))
 		})
 	}, [lat, lon, setLon, setZoom, zoom])
+
 	return (
 		<div className='flex flex-col flex-1 w-full h-5/6 bg-gray-500'>
 			<div

@@ -29,17 +29,23 @@ export const formatForecastDate = (unix) => {
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const abbrDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
   const currentDate = new Date();
   const targetDate = new Date(unix * 1000);
+
   let dayName = dayNames[targetDate.getDay()];
-  const differenceInDays = (targetDate - currentDate) / (1000 * 3600 * 24);
-  if (differenceInDays < 1 && targetDate.getDate() === currentDate.getDate()) {
+  const month = monthNames[targetDate.getMonth()];
+  const day = targetDate.getDate();
+
+  const tomorrow = new Date();
+  tomorrow.setDate(currentDate.getDate() + 1);
+
+  if (targetDate.toDateString() === currentDate.toDateString()) {
     dayName = 'Today';
-  } else if (differenceInDays < 2 && targetDate.getDate() === currentDate.getDate() + 1) {
+  } else if (targetDate.toDateString() === tomorrow.toDateString()) {
     dayName = 'Tomorrow';
   }
-  const month = monthNames[currentDate.getMonth()];
-  const day = currentDate.getDate();
+
   return (
     <>
       <div style={ { fontSize: '1.2rem' } }>{ dayName }</div>

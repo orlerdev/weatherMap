@@ -4,7 +4,8 @@ import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
-app.use(cors({ origin: true }));
+const corsHandler = cors({ origin: true });
+app.use(corsHandler);
 
 // WEATHER
 app.get('/weather', async (req, res) => {

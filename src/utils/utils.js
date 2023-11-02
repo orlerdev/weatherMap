@@ -67,7 +67,7 @@ export const debounce = (func, wait) => {
   };
 };
 
-export const formatLocation = (usStates, location) => {
+export const formatLocation = (location, usStates) => {
   const parts = location.split(',').map(part => part.trim());
   const city = parts[0];
   const state = usStates[parts[1]];

@@ -1,10 +1,13 @@
 // ZUSTAND
 import { create } from 'zustand';
+
 // FIREBASE
 import { storage } from '@firebase/config';
 import { ref, listAll, getDownloadURL } from 'firebase/storage';
+
 // AXIOS
 import axios from 'axios';
+
 // LOCAL
 import { staticWeather, weatherTypes } from '@data/staticWeather';
 import { states } from '@data/states';
@@ -13,17 +16,21 @@ import { formatLocation, randomNumRange, getPhotoTitle } from '@utils/utils';
 const useStore = create((set, get) => ({
   // MAP STATE
   lon: -98.48527,
-  setLon: (lon) => set({ lon }),
+  setLon: (lon) => {
+    set({ lon });
+    get().onCoordinateChange();
+  },
   lat: 29.423017,
-  setLat: (lat) => set({ lat }),
+  setLat: (lat) => {
+    set({ lat });
+    get().onCoordinateChange();
+  },
   zoom: 9,
   setZoom: (zoom) => set({ zoom }),
-  mapLocation: formatLocation(states, 'San Antonio, Texas'),
+  mapLocation: formatLocation('San Antonio, Texas', states),
   setMapLocation: (mapLocation) => set({ mapLocation }),
   search: null,
   setSearch: (search) => set({ search }),
-  searchResult: null,
-  setSearchResult: (searchResult) => set({ searchResult }),
   loading: false,
   setLoading: (loading) => set({ loading }),
   error: null,
@@ -40,11 +47,12 @@ const useStore = create((set, get) => ({
   setForecastDT: (forecastDT) => set({ forecastDT }),
   activeCard: 0,
   setActiveCard: (activeCard) => set({ activeCard }),
+
   // DATA FETCHING
   fetchUserLocation: async () => {
-    const search = get().search();
-    const lon = get().lon();
-    const lat = get().lat();
+    const search = get().search;
+    const lon = get().lon;
+    const lat = get().lat;
     if (search) {
       try {
         get().setLoading(true);
@@ -54,10 +62,12 @@ const useStore = create((set, get) => ({
             params: { query: search }
           }
         );
-        get().setSearchResults(res.data);
-        get().setMapLocation(formatLocation(search.features[0].place_name), states);
-        get().setLon(get().searchResults().features[0].center[0]);
-        get().setLat(get().searchResults().features[0].center[1]);
+
+        if (res.data.features && res.data.features[0] && res.data.features[0].place_name) {
+          get().setMapLocation(formatLocation(res.data.features[1].place_name, states));
+          get().setLon(res.data.features[0].center[0]);
+          get().setLat(res.data.features[0].center[1]);
+        }
         get().setLoading(false);
       } catch (err) {
         console.error('Error fetching search value', err.message);
@@ -72,8 +82,7 @@ const useStore = create((set, get) => ({
             params: { query: `${ lon }, ${ lat }` }
           }
         );
-        get().setSearchResults(res.data);
-        get().setMapLocation(formatLocation(search.features[0].place_name), states);
+        get().setMapLocation(formatLocation(res.data.features[0].place_name), states);
         get().setLoading(false);
       } catch (err) {
         console.error('Error fetching coordinates', err.message);
@@ -130,6 +139,10 @@ const useStore = create((set, get) => ({
       const firstFive = weather.daily.slice(0, 5);
       get().setForecastDT(firstFive.map((day) => day.dt));
     }
+  },
+  onCoordinateChange: () => {
+    get().fetchUserLocation();
+    get().fetchWeatherData();
   }
 }));
 useStore.getState().fetchWeatherData();

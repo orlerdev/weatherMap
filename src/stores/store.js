@@ -28,7 +28,7 @@ const useStore = create((set, get) => ({
   zoom: 9,
   setZoom: (zoom) => set({ zoom }),
   mapLocation: formatLocation('San Antonio, Texas', states),
-  setMapLocation: (mapLocation) => set({ mapLocation }),
+  setMapLocation: (mapLocation) => set({ mapLocation: formatLocation(mapLocation, states) }),
   search: null,
   setSearch: (search) => set({ search }),
   loading: false,
@@ -64,7 +64,7 @@ const useStore = create((set, get) => ({
         );
 
         if (res.data.features && res.data.features[0] && res.data.features[0].place_name) {
-          get().setMapLocation(formatLocation(res.data.features[1].place_name, states));
+          get().setMapLocation(res.data.features[1].place_name);
           get().setLon(res.data.features[0].center[0]);
           get().setLat(res.data.features[0].center[1]);
         }
@@ -77,12 +77,16 @@ const useStore = create((set, get) => ({
     } else if (lon && lat) {
       try {
         get().setLoading(true);
+        console.log('lon and lat location fetching');
         const res = await axios.get(`https://us-central1-weathermap-90bca.cloudfunctions.net/api/mapbox`,
           {
             params: { query: `${ lon }, ${ lat }` }
           }
         );
-        get().setMapLocation(formatLocation(res.data.features[0].place_name), states);
+        console.log(res.data);
+        console.log('res.data.features[0].place_name:', res.data.features[0].place_name);
+        get().setMapLocation(res.data.features[0].place_name);
+        console.log('get().mapLocation:', get().mapLocation);
         get().setLoading(false);
       } catch (err) {
         console.error('Error fetching coordinates', err.message);

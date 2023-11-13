@@ -27,6 +27,8 @@ const useStore = create((set, get) => ({
   },
   zoom: 9,
   setZoom: (zoom) => set({ zoom }),
+  userHome: '',
+  setUserHome: (userHome) => set({ userHome }),
   mapLocation: formatLocation('San Antonio, Texas', states),
   setMapLocation: (mapLocation) => set({ mapLocation: formatLocation(mapLocation, states) }),
   search: null,

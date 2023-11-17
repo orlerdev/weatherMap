@@ -4,7 +4,8 @@ import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
-app.use(cors({ origin: true }));
+const corsHandler = cors({ origin: true });
+app.use(corsHandler);
 
 // WEATHER
 app.get('/weather', async (req, res) => {
@@ -36,8 +37,8 @@ app.get('/mapbox', async (req, res) => {
 
   const isCoordinate = /-?\d+\.\d+,-?\d+\.\d+/.test(query); // Coordinate REGEX check
   const mapboxURL = isCoordinate
-    ? `https://api.mapbox.com/geocoding/v5/mapbox.places/${ query }.json?access_token=${ MAPBOX_API_KEY }`
-    : `https://api.mapbox.com/geocoding/v5/mapbox.places/${ encodeURIComponent(query) }.json?access_token=${ MAPBOX_API_KEY }`;
+    ? `https://api.mapbox.com/geocoding/v5/mapbox.places/${ query }.json?access_token=${ MAPBOX_API_KEY }&types=place`
+    : `https://api.mapbox.com/geocoding/v5/mapbox.places/${ encodeURIComponent(query) }.json?access_token=${ MAPBOX_API_KEY }&types=place`;
 
   try {
     const mapboxResponse = await axios.get(mapboxURL);

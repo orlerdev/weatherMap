@@ -25,6 +25,36 @@ export const formatDate = (date) => {
   return `${ month } ${ day }, ${ year }`;
 };
 
+export const formatForecastDate = (unix) => {
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const abbrDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
+  const currentDate = new Date();
+  const targetDate = new Date(unix * 1000);
+
+  let dayName = dayNames[targetDate.getDay()];
+  const month = monthNames[targetDate.getMonth()];
+  const day = targetDate.getDate();
+
+  const tomorrow = new Date();
+  tomorrow.setDate(currentDate.getDate() + 1);
+
+  if (targetDate.toDateString() === currentDate.toDateString()) {
+    dayName = 'Today';
+  } else if (targetDate.toDateString() === tomorrow.toDateString()) {
+    dayName = 'Tomorrow';
+  }
+
+  return (
+    <>
+      <div style={ { fontSize: '1.2rem' } }>{ dayName }</div>
+      <div style={ { fontSize: '2.5rem' } }>{ month }</div>
+      <div style={ { fontSize: '2.5rem' } }>{ day }</div>
+    </>
+  );
+};
+
 export const debounce = (func, wait) => {
   let timeout;
   return function executedFunction(...args) {
@@ -67,6 +97,7 @@ export const formatMoonPhase = (moonPhase) => {
 };
 
 export const formatTemp = (temp) => `${ Math.round(temp) }º F`;
+;
 
 export const detailFormats = {
   'Sunrise': { func: formatTime },

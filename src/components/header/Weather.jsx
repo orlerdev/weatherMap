@@ -1,10 +1,22 @@
 'use client'
+import useStores from '@stores/store'
 import Image from 'next/image'
 import { formatTemp } from '@utils/utils'
-import useStores from '@stores/stores'
 
 const Weather = () => {
-	const { weatherIcon, weather } = useStores()
+	const { weather, weatherIcon } = useStores((state) => ({
+		weather: state.weather,
+		weatherIcon: state.weatherIcon
+	}))
+
+	if (!weather || !weatherIcon) {
+		return (
+			<div className='flex flex-col justify-center flex-1 w-full p-12'>
+				<h3>Loading...</h3>
+			</div>
+		)
+	}
+
 	return (
 		<div className='flex flex-row justify-center items-center'>
 			<Image
